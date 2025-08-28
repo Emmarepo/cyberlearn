@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import Button from '../ui/Button';
 
@@ -40,14 +40,28 @@ const sampleEmails: Email[] = [
   }
 ];
 
+interface QuizAnswer {
+  questionId: number;
+  userAnswer: boolean;
+  correct: boolean;
+  timeSpent: number;
+}
+
 export default function PhishingQuiz() {
   const [currentEmailIndex, setCurrentEmailIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [showExplanation, setShowExplanation] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [userAnswers, setUserAnswers] = useState<QuizAnswer[]>([]);
+  const [startTime, setStartTime] = useState(Date.now());
+  const [, setIsSubmitting] = useState(false);
   const { data: session } = useSession();
 
   const currentEmail = sampleEmails[currentEmailIndex];
+
+  useEffect(() => {
+    setStartTime(Date.now());
+  }, [currentEmailIndex]);
 
   const handleAnswer = async (isPhishing: boolean) => {
     const isCorrect = isPhishing === currentEmail.isPhishing;
@@ -55,6 +69,16 @@ export default function PhishingQuiz() {
       setScore(score + 1);
     }
     setShowExplanation(true);
+
+    // Store individual answer for final submission
+    const newAnswers = [...userAnswers];
+    newAnswers[currentEmailIndex] = {
+      questionId: currentEmail.id,
+      userAnswer: isPhishing,
+      correct: isCorrect,
+      timeSpent: Date.now() - startTime,
+    };
+    setUserAnswers(newAnswers);
 
     // Note: Quiz results are now stored locally
     // In a production app, you'd send this to your API endpoint
@@ -70,12 +94,54 @@ export default function PhishingQuiz() {
     }
   };
 
+  const submitQuizResults = async () => {
+    if (!session?.user?.id) return;
+
+    try {
+      const response = await fetch('/api/quiz/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          quizType: 'phishing',
+          moduleId: 'phishing',
+          score: Math.round((score / sampleEmails.length) * 100),
+          totalQuestions: sampleEmails.length,
+          correctAnswers: score,
+          timeSpent: Math.floor((Date.now() - startTime) / 1000),
+          answers: userAnswers,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Quiz results submitted:', result);
+        
+        // Show achievement notifications if any were unlocked
+        if (result.newAchievements && result.newAchievements.length > 0) {
+          result.newAchievements.forEach((achievement: { name: string; description: string; points: number }) => {
+            // Simple alert for now - could be replaced with a toast notification
+            alert(`🎉 Achievement Unlocked: ${achievement.name}\n${achievement.description}\n+${achievement.points} points!`);
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error submitting quiz results:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const handleNext = () => {
     if (currentEmailIndex < sampleEmails.length - 1) {
       setCurrentEmailIndex(currentEmailIndex + 1);
       setShowExplanation(false);
     } else {
       setQuizCompleted(true);
+      if (session?.user?.id) {
+        submitQuizResults();
+      }
     }
   };
 

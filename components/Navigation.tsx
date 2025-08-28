@@ -10,6 +10,7 @@ const Navigation = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +20,23 @@ const Navigation = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (session?.user?.id) {
+        try {
+          const response = await fetch('/api/admin/analytics');
+          setIsAdmin(response.ok);
+        } catch {
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [session]);
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
@@ -46,9 +64,9 @@ const Navigation = () => {
               Learn
             </Link>
             <Link 
-              href="/tools/password-checker" 
+              href="/tools" 
               className={`text-sm font-medium transition-colors ${
-                pathname === '/tools/password-checker' 
+                pathname.startsWith('/tools') 
                   ? 'text-blue-600' 
                   : 'text-gray-600 hover:text-blue-600'
               }`}
@@ -56,15 +74,27 @@ const Navigation = () => {
               Tools
             </Link>
             <Link 
-              href="/quizzes/phishing" 
+              href="/quizzes" 
               className={`text-sm font-medium transition-colors ${
-                pathname === '/quizzes/phishing' 
+                pathname.startsWith('/quizzes') 
                   ? 'text-blue-600' 
                   : 'text-gray-600 hover:text-blue-600'
               }`}
             >
               Quizzes
             </Link>
+            {isAdmin && (
+              <Link 
+                href="/admin" 
+                className={`text-sm font-medium transition-colors ${
+                  pathname === '/admin' 
+                    ? 'text-purple-600' 
+                    : 'text-gray-600 hover:text-purple-600'
+                }`}
+              >
+                Admin
+              </Link>
+            )}
           </div>
 
           {/* Auth Buttons */}

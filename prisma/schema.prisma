@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// NextAuth.js Required Models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("user") // "user" or "admin"
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+  
+  // Cybersecurity Learning Platform specific fields
+  totalPoints   Int @default(0)
+  currentStreak Int @default(0)
+  lastActive    DateTime?
+  
+  // Relations to learning progress
+  quizResults   QuizResult[]
+  achievements  UserAchievement[]
+  userProgress  UserProgress[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Cybersecurity Learning Platform Models
+model LearningPath {
+  id          String @id @default(cuid())
+  title       String
+  description String
+  order       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  modules     Module[]
+  userProgress UserProgress[]
+}
+
+model Module {
+  id          String @id @default(cuid())
+  pathId      String
+  title       String
+  type        String // 'quiz', 'tool', 'lesson'
+  content     String?
+  order       Int
+  points      Int @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  path         LearningPath @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  userProgress UserProgress[]
+}
+
+model UserProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  pathId      String?
+  moduleId    String?
+  status      String   // 'locked', 'in-progress', 'completed'
+  score       Int?
+  completedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  path LearningPath? @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  module Module? @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, moduleId])
+}
+
+model QuizResult {
+  id             String   @id @default(cuid())
+  userId         String
+  quizType       String   // 'phishing', 'security', etc.
+  moduleId       String?
+  score          Int
+  totalQuestions Int
+  correctAnswers Int
+  timeSpent      Int?     // seconds
+  answers        String   // JSON string of user answers
+  timestamp      DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  icon        String
+  points      Int
+  category    String
+  condition   String   // JSON string describing unlock condition
+  createdAt   DateTime @default(now())
+  
+  userAchievements UserAchievement[]
+}
+
+model UserAchievement {
+  id            String   @id @default(cuid())
+  userId        String
+  achievementId String
+  unlockedAt    DateTime @default(now())
+  
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  achievement Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, achievementId])
+}

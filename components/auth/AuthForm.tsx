@@ -8,12 +8,18 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Button from '../ui/Button';
 
-const authSchema = z.object({
+const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
-type AuthFormData = z.infer<typeof authSchema>;
+const registerSchema = z.object({
+  name: z.string().optional(),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+});
+
+type RegisterFormData = z.infer<typeof registerSchema>;
 
 interface AuthFormProps {
   mode: 'login' | 'register';
@@ -28,31 +34,33 @@ export default function AuthForm({ mode }: AuthFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<AuthFormData>({
-    resolver: zodResolver(authSchema),
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema),
   });
 
-  const onSubmit = async (data: AuthFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       setIsLoading(true);
       setError(null);
       
-      if (mode === 'login') {
-        const result = await signIn('credentials', {
-          email: data.email,
-          password: data.password,
-          redirect: false,
-        });
+      // Both login and registration use the same signIn flow
+      // The NextAuth.js configuration handles auto-registration
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        name: mode === 'register' ? data.name : undefined,
+        redirect: false,
+      });
 
-        if (result?.error) {
+      if (result?.error) {
+        if (mode === 'login') {
           setError('Invalid email or password');
         } else {
-          router.push('/learn');
+          setError('Registration failed. Please try again.');
         }
       } else {
-        // For register mode, we'll simulate account creation
-        // In a real app, you'd create the account in your database
-        setError('Registration not implemented yet. Please use login.');
+        // Success - redirect to learning dashboard
+        router.push('/learn');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -63,6 +71,27 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      {mode === 'register' && (
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
+            Full Name <span className="text-gray-500">(optional)</span>
+          </label>
+          <div className="mt-2">
+            <input
+              id="name"
+              type="text"
+              autoComplete="name"
+              {...register('name')}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+              placeholder="Enter your full name"
+            />
+            {errors.name && (
+              <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>
+            )}
+          </div>
+        </div>
+      )}
+      
       <div>
         <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
           Email address
