@@ -25,10 +25,17 @@ export const authOptions: NextAuthOptions = {
             where: { email: credentials.email }
           })
 
+          console.log('Auth debug - User found:', !!user)
+          console.log('Auth debug - Has password:', !!user?.password)
+          console.log('Auth debug - Email:', credentials.email)
+
           if (user && user.password) {
             // Verify password
             const isValid = await bcrypt.compare(credentials.password, user.password)
+            console.log('Auth debug - Password valid:', isValid)
+            
             if (isValid) {
+              console.log('Auth debug - Login successful for:', user.email)
               return {
                 id: user.id,
                 email: user.email,
@@ -37,6 +44,7 @@ export const authOptions: NextAuthOptions = {
               }
             }
             // Password doesn't match - return null (failed login)
+            console.log('Auth debug - Password mismatch for:', user.email)
             return null
           }
 
