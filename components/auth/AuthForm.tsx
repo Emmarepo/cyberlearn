@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
+import { signIn, getSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Button from '../ui/Button';
 
 const loginSchema = z.object({
@@ -28,6 +28,7 @@ interface AuthFormProps {
 export default function AuthForm({ mode }: AuthFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
   const {
@@ -42,6 +43,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
     try {
       setIsLoading(true);
       setError(null);
+      setSuccess(null);
       
       // Both login and registration use the same signIn flow
       // The NextAuth.js configuration handles auto-registration
@@ -59,8 +61,23 @@ export default function AuthForm({ mode }: AuthFormProps) {
           setError('Registration failed. Please try again.');
         }
       } else {
-        // Success - redirect to learning dashboard
-        router.push('/learn');
+        // Success - show feedback and redirect
+        if (mode === 'register') {
+          setError(null);
+          setSuccess('Account created successfully! Redirecting...');
+          // Small delay to show success before redirect
+          setTimeout(() => {
+            router.push('/learn');
+          }, 1500);
+        } else {
+          // Login - redirect based on user role
+          const session = await getSession();
+          if (session?.user?.role === 'admin') {
+            router.push('/admin');
+          } else {
+            router.push('/learn');
+          }
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -133,6 +150,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
           <div className="flex">
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">{error}</h3>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {success && (
+        <div className="rounded-md bg-green-50 p-4">
+          <div className="flex">
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-green-800">{success}</h3>
             </div>
           </div>
         </div>

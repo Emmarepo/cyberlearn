@@ -53,25 +53,14 @@ const Navigation = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link 
-              href="/learn" 
-              className={`text-sm font-medium transition-colors ${
-                pathname === '/learn' 
-                  ? 'text-blue-600' 
-                  : 'text-gray-600 hover:text-blue-600'
-              }`}
-            >
+            <Link href="/learn" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
               Learn
             </Link>
-            <Link 
-              href="/tools" 
-              className={`text-sm font-medium transition-colors ${
-                pathname.startsWith('/tools') 
-                  ? 'text-blue-600' 
-                  : 'text-gray-600 hover:text-blue-600'
-              }`}
-            >
+            <Link href="/tools" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
               Tools
+            </Link>
+            <Link href="/profile" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+              Profile
             </Link>
             <Link 
               href="/quizzes" 

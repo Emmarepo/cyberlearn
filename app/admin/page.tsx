@@ -119,22 +119,41 @@ export default function AdminDashboard() {
     fetchData();
   }, [session, status, router, currentPage, searchTerm, fetchData]);
 
-  const updateUserRole = async (userId: string, newRole: string) => {
+  const updateUserRole = async (userId: string, newRole: 'user' | 'admin') => {
     try {
-      const response = await fetch('/api/admin/users', {
+      const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, role: newRole })
+        body: JSON.stringify({ role: newRole })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update user role');
+      if (response.ok) {
+        fetchData();
       }
+    } catch (error) {
+      console.error('Error updating user role:', error);
+    }
+  };
 
-      // Refresh users data
-      fetchData();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to update user');
+  const deleteUser = async (userId: string, userEmail: string) => {
+    if (!confirm(`Are you sure you want to delete user ${userEmail}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE'
+      });
+
+      if (response.ok) {
+        fetchData();
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to delete user');
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user');
     }
   };
 
@@ -385,15 +404,26 @@ export default function AdminDashboard() {
                             {user._count.achievements} achievements
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <select
-                            value={user.role}
-                            onChange={(e) => updateUserRole(user.id, e.target.value)}
-                            className="border border-gray-300 rounded px-2 py-1 text-sm"
-                          >
-                            <option value="user">User</option>
-                            <option value="admin">Admin</option>
-                          </select>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <div className="flex items-center space-x-2">
+                            <select
+                              value={user.role}
+                              onChange={(e) => updateUserRole(user.id, e.target.value as 'user' | 'admin')}
+                              className="text-sm border border-gray-300 rounded px-2 py-1"
+                            >
+                              <option value="user">User</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                            {user.role !== 'admin' && (
+                              <button
+                                onClick={() => deleteUser(user.id, user.email)}
+                                className="text-red-600 hover:text-red-900 text-sm font-medium"
+                                title="Delete user"
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
