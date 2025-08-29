@@ -36,6 +36,8 @@ export const authOptions: NextAuthOptions = {
                 image: user.image,
               }
             }
+            // Password doesn't match - return null (failed login)
+            return null
           }
 
           // If user doesn't exist, create a new one (for demo purposes)
