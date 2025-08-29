@@ -15,7 +15,11 @@ export const authOptions: NextAuthOptions = {
         name: { label: 'Name', type: 'text' }
       },
       async authorize(credentials) {
+        console.log('=== AUTH FUNCTION CALLED ===')
+        console.log('Credentials received:', { email: credentials?.email, hasPassword: !!credentials?.password })
+        
         if (!credentials?.email || !credentials?.password) {
+          console.log('Missing credentials, returning null')
           return null
         }
 
