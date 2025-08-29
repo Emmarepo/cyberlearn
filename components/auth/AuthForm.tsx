@@ -45,6 +45,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
       setError(null);
       setSuccess(null);
       
+      console.log('=== CLIENT SIDE LOGIN ATTEMPT ===');
+      console.log('Email:', data.email);
+      console.log('Mode:', mode);
+      
       // Both login and registration use the same signIn flow
       // The NextAuth.js configuration handles auto-registration
       const result = await signIn('credentials', {
@@ -53,6 +57,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
         name: mode === 'register' ? data.name : undefined,
         redirect: false,
       });
+      
+      console.log('SignIn result:', result);
 
       if (result?.error) {
         if (mode === 'login') {
