@@ -60,12 +60,6 @@ const learningModules = [
   }
 ];
 
-const stats = [
-  { label: "Security Modules", value: "50+" },
-  { label: "Interactive Quizzes", value: "100+" },
-  { label: "Success Rate", value: "95%" },
-  { label: "Active Learners", value: "10K+" }
-];
 
 export default function Home() {
   const { data: session } = useSession();
@@ -186,28 +180,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="bg-gray-50 py-12 sm:py-16">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <dl className="grid grid-cols-1 gap-x-8 gap-y-16 text-center lg:grid-cols-4">
-            {stats.map((stat) => (
-              <motion.div 
-                key={stat.label}
-                className="mx-auto flex max-w-xs flex-col gap-y-4"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5 }}
-              >
-                <dt className="text-base leading-7 text-gray-600">{stat.label}</dt>
-                <dd className="order-first text-3xl font-semibold tracking-tight text-gray-900 sm:text-5xl">
-                  {stat.value}
-                </dd>
-              </motion.div>
-            ))}
-          </dl>
-        </div>
-      </div>
 
       {/* Features Section */}
       <div className="bg-gradient-to-b from-white to-gray-50 py-24 sm:py-32">
