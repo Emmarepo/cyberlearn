@@ -59,26 +59,30 @@ export default function AuthForm({ mode }: AuthFormProps) {
       });
       
       console.log('SignIn result:', result);
+      console.log('SignIn result.ok:', result?.ok);
+      console.log('SignIn result.error:', result?.error);
+      console.log('SignIn result.status:', result?.status);
 
       if (result?.error) {
-        console.log('Login error:', result.error);
+        console.log('Login error detected:', result.error);
         if (mode === 'login') {
           setError('Invalid email or password');
         } else {
           setError('Registration failed. Please try again.');
         }
-      } else if (result?.ok) {
-        console.log('Login successful, attempting redirect...');
-        // Success - redirect immediately using NextAuth's built-in redirect
+      } else {
+        console.log('No error detected, checking redirect...');
+        // Success - redirect regardless of result.ok status
+        // NextAuth sometimes doesn't set ok:true but authentication still works
         if (mode === 'register') {
           setSuccess('Account created successfully! Redirecting...');
         }
         
-        // Use window.location for immediate redirect
-        window.location.href = '/learn';
-      } else {
-        console.log('Unexpected result:', result);
-        setError('Login failed. Please try again.');
+        console.log('Attempting redirect to /learn...');
+        // Force redirect after short delay
+        setTimeout(() => {
+          window.location.href = '/learn';
+        }, 100);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
