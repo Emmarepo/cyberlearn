@@ -76,13 +76,15 @@ export default function AuthForm({ mode }: AuthFormProps) {
             router.push('/learn');
           }, 1500);
         } else {
-          // Login - redirect based on user role
-          const session = await getSession();
-          if (session?.user?.role === 'admin') {
-            router.push('/admin');
-          } else {
-            router.push('/learn');
-          }
+          // Login - redirect based on user role with delay for session update
+          setTimeout(async () => {
+            const session = await getSession();
+            if (session?.user?.role === 'admin') {
+              router.push('/admin');
+            } else {
+              router.push('/learn');
+            }
+          }, 500);
         }
       }
     } catch (err) {
