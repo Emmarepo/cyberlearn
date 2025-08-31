@@ -22,20 +22,8 @@ const Navigation = () => {
   }, []);
 
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      if (session?.user?.id) {
-        try {
-          const response = await fetch('/api/admin/analytics');
-          setIsAdmin(response.ok);
-        } catch {
-          setIsAdmin(false);
-        }
-      } else {
-        setIsAdmin(false);
-      }
-    };
-
-    checkAdminStatus();
+    // Check admin status from session instead of API call
+    setIsAdmin(session?.user?.role === 'admin');
   }, [session]);
 
   return (
@@ -53,36 +41,40 @@ const Navigation = () => {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/learn" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-              Learn
-            </Link>
-            <Link href="/tools" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-              Tools
-            </Link>
-            <Link href="/profile" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-              Profile
-            </Link>
-            <Link 
-              href="/quizzes" 
-              className={`text-sm font-medium transition-colors ${
-                pathname.startsWith('/quizzes') 
-                  ? 'text-blue-600' 
-                  : 'text-gray-600 hover:text-blue-600'
-              }`}
-            >
-              Quizzes
-            </Link>
-            {isAdmin && (
-              <Link 
-                href="/admin" 
-                className={`text-sm font-medium transition-colors ${
-                  pathname === '/admin' 
-                    ? 'text-purple-600' 
-                    : 'text-gray-600 hover:text-purple-600'
-                }`}
-              >
-                Admin
-              </Link>
+            {session && (
+              <>
+                <Link href="/learn" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  Learn
+                </Link>
+                <Link href="/tools" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  Tools
+                </Link>
+                <Link href="/profile" className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
+                  Profile
+                </Link>
+                <Link 
+                  href="/quizzes" 
+                  className={`text-sm font-medium transition-colors ${
+                    pathname.startsWith('/quizzes') 
+                      ? 'text-blue-600' 
+                      : 'text-gray-600 hover:text-blue-600'
+                  }`}
+                >
+                  Quizzes
+                </Link>
+                {isAdmin && (
+                  <Link 
+                    href="/admin" 
+                    className={`text-sm font-medium transition-colors ${
+                      pathname === '/admin' 
+                        ? 'text-purple-600' 
+                        : 'text-gray-600 hover:text-purple-600'
+                    }`}
+                  >
+                    Admin
+                  </Link>
+                )}
+              </>
             )}
           </div>
 

@@ -19,7 +19,8 @@ export async function middleware(request: NextRequest) {
     '/tools',
     '/quizzes',
     '/lessons',
-    '/admin'
+    '/admin',
+    '/profile'
   ];
 
   // Check if the path is public
