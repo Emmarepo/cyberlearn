@@ -240,16 +240,66 @@ export default function LearningDashboard() {
     );
   }
 
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 17) return 'Good afternoon';
+    return 'Good evening';
+  };
+
+  const getUserDisplayName = () => {
+    const name = userProgress?.user?.name || session?.user?.name;
+    if (name) return name;
+    const email = session?.user?.email || '';
+    return email.split('@')[0];
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* User Progress Section */}
+      {/* Beautiful Welcome Header */}
       {session && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-4">
-            Welcome back, {userProgress?.user?.name || session.user.email}
-          </h2>
-        </div>
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 mb-8"
+        >
+          <div className="absolute inset-0 bg-black opacity-10"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20"></div>
+          
+          <div className="relative px-6 py-12 sm:px-8 lg:px-12">
+            <div className="max-w-7xl mx-auto">
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4">
+                  {getTimeBasedGreeting()}, {getUserDisplayName()}! 👋
+                </h1>
+                <p className="text-xl sm:text-2xl text-blue-100 font-medium mb-6">
+                  Ready to continue your cybersecurity journey?
+                </p>
+                <div className="flex items-center space-x-6 text-blue-100">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">🏆</span>
+                    <span className="font-semibold">{userProgress?.user?.totalPoints || 0} Points</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">🔥</span>
+                    <span className="font-semibold">{userProgress?.user?.currentStreak || 0} Day Streak</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-2xl">📚</span>
+                    <span className="font-semibold">{userProgress?.overallStats?.totalQuizzes || 0} Quizzes Completed</span>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
       )}
+
 
       {/* Progress Overview */}
       <div className="bg-white shadow">
