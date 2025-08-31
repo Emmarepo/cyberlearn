@@ -61,31 +61,24 @@ export default function AuthForm({ mode }: AuthFormProps) {
       console.log('SignIn result:', result);
 
       if (result?.error) {
+        console.log('Login error:', result.error);
         if (mode === 'login') {
           setError('Invalid email or password');
         } else {
           setError('Registration failed. Please try again.');
         }
-      } else {
-        // Success - show feedback and redirect
+      } else if (result?.ok) {
+        console.log('Login successful, attempting redirect...');
+        // Success - redirect immediately using NextAuth's built-in redirect
         if (mode === 'register') {
-          setError(null);
           setSuccess('Account created successfully! Redirecting...');
-          // Small delay to show success before redirect
-          setTimeout(() => {
-            router.push('/learn');
-          }, 1500);
-        } else {
-          // Login - redirect based on user role with delay for session update
-          setTimeout(async () => {
-            const session = await getSession();
-            if (session?.user?.role === 'admin') {
-              router.push('/admin');
-            } else {
-              router.push('/learn');
-            }
-          }, 500);
         }
+        
+        // Use window.location for immediate redirect
+        window.location.href = '/learn';
+      } else {
+        console.log('Unexpected result:', result);
+        setError('Login failed. Please try again.');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
