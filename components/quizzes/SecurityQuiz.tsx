@@ -890,18 +890,18 @@ export default function SecurityQuiz() {
   if (!selectedCategory) {
     return (
       <div className="max-w-4xl mx-auto p-6">
-        <h1 className="text-3xl font-bold mb-8 text-center">Security Quiz</h1>
+        <h1 className="text-3xl font-bold mb-8 text-center text-foreground">Security Quiz</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((category) => (
             <motion.div
               key={category}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white rounded-lg shadow-md p-6 cursor-pointer border-2 border-transparent hover:border-blue-500 transition-colors"
+              className="bg-surface-elevated rounded-lg shadow-md p-6 cursor-pointer border-2 border-transparent hover:border-primary-500 transition-colors"
               onClick={() => handleCategorySelect(category)}
             >
-              <h3 className="text-xl font-semibold mb-2">{category}</h3>
-              <p className="text-gray-600">
+              <h3 className="text-xl font-semibold mb-2 text-foreground">{category}</h3>
+              <p className="text-text-secondary">
                 Test your knowledge in {category.toLowerCase()}
               </p>
             </motion.div>
@@ -913,21 +913,21 @@ export default function SecurityQuiz() {
 
   if (quizCompleted) {
     return (
-      <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-4">Quiz Completed!</h2>
-        <p className="text-lg mb-4">
+      <div className="max-w-2xl mx-auto p-6 bg-surface-elevated rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-foreground">Quiz Completed!</h2>
+        <p className="text-lg mb-4 text-foreground">
           Your score: {score} points
         </p>
-        <p className="text-gray-600 mb-6">
+        <p className="text-text-secondary mb-6">
           You answered {score} out of {filteredQuestions.length} questions correctly.
         </p>
         {isSaving && (
-          <p className="text-blue-600 mb-4">Saving your results...</p>
+          <p className="text-primary-600 mb-4">Saving your results...</p>
         )}
         <div className="flex gap-4">
           <button
             onClick={() => handleCategorySelect(selectedCategory!)}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-colors"
           >
             Retake Quiz
           </button>
@@ -955,10 +955,10 @@ export default function SecurityQuiz() {
 
   return (
     <div className="max-w-4xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-surface-elevated rounded-lg shadow-md p-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">{selectedCategory} Quiz</h1>
-          <div className="text-sm text-gray-600">
+          <h1 className="text-2xl font-bold text-foreground">{selectedCategory} Quiz</h1>
+          <div className="text-sm text-text-secondary">
             Question {currentQuestion + 1} of {filteredQuestions.length}
           </div>
         </div>
@@ -966,7 +966,7 @@ export default function SecurityQuiz() {
         <div className="mb-6">
           <div className="bg-gray-200 rounded-full h-2 mb-4">
             <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentQuestion + 1) / filteredQuestions.length) * 100}%` }}
             />
           </div>
@@ -974,15 +974,15 @@ export default function SecurityQuiz() {
 
         <div className="mb-6">
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm font-medium text-blue-600">
+            <span className="text-sm font-medium text-primary-600">
               {currentQuestionData.category}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-text-muted">
               {currentQuestionData.points} points
             </span>
           </div>
           
-          <h2 className="text-xl font-semibold mb-6">
+          <h2 className="text-xl font-semibold mb-6 text-foreground">
             {currentQuestionData.question}
           </h2>
 
@@ -994,16 +994,16 @@ export default function SecurityQuiz() {
                 whileTap={{ scale: 0.98 }}
                 onClick={() => handleAnswerSelect(index)}
                 disabled={showExplanation}
-                className={`w-full p-4 text-left rounded-lg border-2 transition-colors ${
+                className={`w-full p-4 text-left rounded-lg border-2 transition-colors text-foreground ${
                   selectedAnswer === index
                     ? showExplanation
                       ? index === currentQuestionData.correctAnswer
                         ? 'border-green-500 bg-green-50'
                         : 'border-red-500 bg-red-50'
-                      : 'border-blue-500 bg-blue-50'
+                      : 'border-primary-500 bg-primary-50'
                     : showExplanation && index === currentQuestionData.correctAnswer
                     ? 'border-green-500 bg-green-50'
-                    : 'border-gray-200 hover:border-gray-300'
+                    : 'border-gray-200 hover:border-gray-300 bg-surface-elevated'
                 } ${showExplanation ? 'cursor-not-allowed' : 'cursor-pointer'}`}
               >
                 {option}
@@ -1018,13 +1018,13 @@ export default function SecurityQuiz() {
             animate={{ opacity: 1, y: 0 }}
             className="mb-6 p-4 bg-gray-50 rounded-lg"
           >
-            <h3 className="font-semibold mb-2">Explanation:</h3>
-            <p className="text-gray-700">{currentQuestionData.explanation}</p>
+            <h3 className="font-semibold mb-2 text-foreground">Explanation:</h3>
+            <p className="text-text-secondary">{currentQuestionData.explanation}</p>
           </motion.div>
         )}
 
         <div className="flex justify-between items-center">
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-text-secondary">
             Score: {score} points
           </div>
           
