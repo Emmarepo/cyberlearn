@@ -180,7 +180,7 @@ const questions: Question[] = [
       "12345678"
     ],
     correctAnswer: 2,
-    explanation: "The strongest password is 'CorrectHorseBatteryStaple' because it's a passphrase that's both long and memorable. Length is more important than complexity when it comes to password strength.",
+    explanation: "The strongest password is &apos;CorrectHorseBatteryStaple&apos; because it&apos;s a passphrase that&apos;s both long and memorable. Length is more important than complexity when it comes to password strength.",
     difficulty: "beginner",
     points: 10
   },
@@ -189,7 +189,7 @@ const questions: Question[] = [
     category: "Password Security",
     question: "What is a password manager and why is it recommended?",
     options: [
-      "A tool that remembers your passwords so you don't have to",
+      "A tool that remembers your passwords so you don&apos;t have to",
       "A secure vault that stores and generates strong, unique passwords for each service",
       "A way to share passwords with friends",
       "A tool that makes all your passwords the same"

@@ -24,7 +24,7 @@ export default function PhishingQuizPage() {
             </h2>
             <ul className="list-disc list-inside space-y-2 text-primary-800">
               <li>Urgent or threatening language</li>
-              <li>Generic greetings like "Dear Customer"</li>
+              <li>Generic greetings like &quot;Dear Customer&quot;</li>
               <li>Suspicious email addresses or domains</li>
               <li>Requests for sensitive information</li>
               <li>Poor grammar and spelling</li>
