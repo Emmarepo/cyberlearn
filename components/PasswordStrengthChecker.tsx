@@ -69,8 +69,8 @@ export default function PasswordStrengthChecker() {
   const currentIndicator = getStrengthIndicator();
 
   return (
-    <div className="w-full max-w-md p-6 bg-surface-elevated rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4 text-foreground">Password Strength Checker</h2>
+    <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4 text-gray-900">Password Strength Checker</h2>
       
       <div className="mb-4">
         <input
@@ -78,7 +78,7 @@ export default function PasswordStrengthChecker() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter your password"
-          className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 text-foreground bg-surface-primary"
+          className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
         />
       </div>
 
@@ -89,7 +89,7 @@ export default function PasswordStrengthChecker() {
             style={{ width: `${currentIndicator.percentage}%` }}
           />
         </div>
-        <p className="mt-2 text-sm text-text-secondary">
+        <p className="mt-2 text-sm text-gray-600">
           Strength: {currentIndicator.label}
         </p>
       </div>

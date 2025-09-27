@@ -1,11 +1,21 @@
 @import "tailwindcss";
 
 :root {
+  /* Enhanced color system for better contrast */
   --background: #ffffff;
   --foreground: #111827;
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-muted: #6b7280;
+  
+  /* Button color system */
+  --btn-primary-bg: #2563eb;
+  --btn-primary-text: #ffffff;
+  --btn-primary-hover: #1d4ed8;
+  --btn-outline-text: #2563eb;
+  --btn-outline-border: #2563eb;
+  --btn-outline-hover-bg: #2563eb;
+  --btn-outline-hover-text: #ffffff;
 }
 
 @theme inline {
@@ -15,29 +25,39 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Force light mode for mobile compatibility - remove dark mode issues */
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
-  /* Ensure proper text rendering on mobile */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Ensure all text has proper contrast on mobile */
-* {
-  color: inherit;
+/* Enhanced button styling for better contrast */
+.btn-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+  border-color: var(--btn-primary-bg) !important;
 }
 
-/* Force proper text colors for mobile readability */
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover) !important;
+  border-color: var(--btn-primary-hover) !important;
+}
+
+.btn-outline {
+  background-color: transparent !important;
+  color: var(--btn-outline-text) !important;
+  border-color: var(--btn-outline-border) !important;
+}
+
+.btn-outline:hover {
+  background-color: var(--btn-outline-hover-bg) !important;
+  color: var(--btn-outline-hover-text) !important;
+  border-color: var(--btn-outline-hover-bg) !important;
+}
+
+/* Ensure proper text colors */
 .text-primary {
   color: var(--text-primary) !important;
 }
@@ -48,4 +68,21 @@ body {
 
 .text-muted {
   color: var(--text-muted) !important;
+}
+
+/* Fix specific component color issues */
+.bg-surface-elevated {
+  background-color: #ffffff !important;
+}
+
+.bg-surface-primary {
+  background-color: #ffffff !important;
+}
+
+.text-foreground {
+  color: var(--text-primary) !important;
+}
+
+.text-text-secondary {
+  color: var(--text-secondary) !important;
 }
